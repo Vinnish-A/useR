@@ -1,0 +1,288 @@
+---
+title: "useR"
+format:
+  html:
+    toc: true
+    toc-location: left
+knitr:
+  opts_chunk: 
+    collapse: true
+    fig.align: center
+---
+
+```{r}
+#| include: false
+
+library(tidyverse)
+```
+
+## 前言
+
+本册为Vinnish的个人R语言编码案例分享. 本册假定读者具有一定的编程经验, 并且对R中的常用函数, R文件操作较为熟悉. 
+
+推荐阅读: 
+
+- [R语言编程-基于tidyverse]()
+- [R语言教程-李东风]()
+
+## 为什么要用R? 
+
+'为什么要用R? '
+
+![](imgs/黄豆人崩溃.gif){fig-align="center"}
+
+这不是疑问句, 这是反问句. 2025年, 大模型热潮, Python作为人工智能语言无疑是更好的选择. 但是又是什么让Python比R更受欢迎呢? 比较Python与R, 我们会发现在控制语句上两者十分接近, 包管理方式也十分接近, 或者说现代编程语言彼此之间的共性远大于差异. 区别在于细微的语法差异, 使用者群体的数量与风格, 核心管理团队的定位与发展计划等. 琐碎的区别日积月累后, 造成了不同语言社区的巨大差异. Python在各行各业都大放光彩, R却只局限于统计与文件操作(这不意味着Python能做的事R做不了, 只是要付出无用功). 具体而言, R落后的原因包括: 
+
+1. 表达式被滥用, 不利于静态分析; 
+2. 混乱的, 迟迟出现的面向对象方法; 
+3. 混乱的包管理与命名规范; 
+
+然而, 表达式泛滥, 表示用户可以使用表达式简单的实现各种实用的元编程模板, 让用户可以写代码写的飞快; 面向对象基础薄弱, 意味着用户只需要爽写函数就可以了; 在快速开发, 原型实现与探索性数据分析中, 上述缺点都是R在当下无可替代的理由. 更何况R中还有浩瀚如海班的历史方法可以实用. 
+
+编程语言只是实现想法的工具, 在想象的领域, 您可以信马由缰. 
+
+## 现代的R
+
+Rstudio公司(现名Posit)为R语言做出了无比的贡献, 其为R贡献了各种实用又现代的软件包, 引入现代编程任务与框架. 甚至说, 通过对原版R(base R)中各种功能的封装或改良, 将R改良为了一门新的语言--tidy R('Q'语言或者'P'语言? ). 
+
+但是我们也需要注意到, tidy R中多数功能是对base R的封装, 也就意味着base R中同样能实现. 由于tidy R的框架性, tidy R在一系列任务中如鱼得水的同时, 没能覆盖到另一些任务上, 比如在tidy R框架下对一个数据框中, 计算每一行中所有数值相加的结果. tidy R中并非不能进行, 但是效率与丑陋的实现可能都令人难以接受. 这就要求我们同时也要对tidy R是如何封装base R的有所了解. 
+
+```{r}
+tidy_rowSums = function(df, name, con = where(is.numeric)) {
+  
+    con = enquo(con)
+    df[[name]] = rowSums(select(df, !!con))
+    
+    return(df)
+    
+}
+
+iris |> 
+  tidy_rowSums('sum') |> 
+  as_tibble()
+```
+
+在快速的原型开发阶段, 私有以下建议: 
+
+- 成为tidy R高手, 更是base R高手
+- 用新不用旧: 
+  - tibble而不是data.frame
+  - map而不是lapply
+  - R6而不是S4
+- 除迫不得已外不行名索引
+- 除矩阵运算外不使用矩阵
+
+## "数据框"思维
+
+数据框(data.frame)是R中基础的数据结构之一. "数据框"思维即是指在R中把我们需要完成的任务通过转化为我们最熟悉的数据结构--数据框, 把陌生的问题转换为熟悉的问题并加以逐步解决. 数据框是列表的特殊形式. 有关R中的数据结构, 详情见[R语言高手计划](https://vinnish-a.github.io/R-master/index.html). 
+
+```{r}
+vec_1 = 1:3
+vec_2 = 4:6
+
+lst_raw = list(a = vec_1, b = vec_2)
+df_raw = data.frame(a = vec_1, b = vec_2)
+
+lst_from_df = as.list(df_raw)
+df_from_lst = as.data.frame(lst_raw)
+
+identical(lst_raw, lst_from_df)
+identical(df_raw, df_from_lst)
+```
+
+数据框可以看作等长向量组成的列表. 如果向量不等长, 或者包含不是向量的列, 则会得到意想不到(unexpected)的结果, 所以尽量不应该尝试用原生data.frame装列表. 
+
+```{r}
+vec_1 = 1:3
+vec_2 = 4:7
+
+df_unequal_length = tryCatch(data.frame(a = vec_1, b = vec_2), error = \(e) e)
+df_contains_lst = data.frame(a = vec_1, b = as.list(vec_1))
+
+df_unequal_length
+df_contains_lst
+```
+
+tibble是特殊形式的数据框, 与原生的data.frame的不同之处在于: 
+
+1. 控制台打印出来更好看; 
+2. 抛弃了列名; 
+3. 可以以列表作为一列; 
+4. 其它; 
+
+```{r}
+vec_1 = 1:3
+vec_2 = 4:6
+
+df_raw = data.frame(a = vec_1, b = vec_2)
+tb_raw = tibble(a = vec_1, b = vec_2)
+tb_lst = tibble(a = vec_1, b = as.list(vec_2))
+
+rownames(df_raw) = c('a', 'b', 'c')
+rownames(tb_raw) = c('a', 'b', 'c')
+
+df_raw
+tb_raw
+tb_lst
+
+```
+
+在实际工作里, 我们可能要处理一些基因表达数据. 于是我们打开了UCSC Xena, 下载了别人的预制数据. 我们惊喜的发现第一列是一列数字, 这是基因的ENTREZ ID而不是我们熟悉的Symbol. 我们需要将其转换为熟悉的Symbol. 
+
+所幸我们还有一个map数据, 其内包含了ENTREZ ID与Symbol的对应关系. 
+
+```{r message=FALSE}
+df_expr = read_tsv('examples/expr.tsv') |> 
+  mutate(sample = as.character(sample))
+df_expr
+
+df_map = read_tsv('examples/probemap.tsv') |> 
+  mutate(ENTREZID = as.character(ENTREZID))
+df_map
+```
+
+如我们熟悉的那样, 转录组数据一般以基因作为行名, 样本作为列名, 这继承自过去转录组对照试验样本量较小的特点. 然而在这里, 我们将只是用最简单, 最基础的思路, 以'数据框'的形式处理经典的转录组分析任务. 
+
+如果你已经读过了前言中提及的书目, 你可能会有以下两种方案: 
+
+1. 连接表;
+
+```{r}
+full_join(df_map, df_expr, c('ENTREZID' = 'sample'))
+```
+
+2. 字典; 
+
+```{r}
+table_entrez2symbol = df_map |> pull(SYMBOL, ENTREZID)
+table_entrez2symbol[1:3]
+
+df_maped = df_expr |> 
+  mutate(sample = table_entrez2symbol[sample])
+
+df_maped
+```
+
+在高维矩阵里, 人们习惯将行作为样本, 列作为特征, 所以我们应该对这个列表进行一次转置(transpose). 我们试图直接使用`t`函数操作这个数据框, 结果很不理想: 
+
+```{r}
+df_maped |> t() |> as_tibble()
+```
+
+糟糕的事情有三件: 
+
+1. tibble中取消了列名, 所以我们没法把Symbol挪走, 他会随数值一起转置, 并且把所有列的类型都变成字符串; 
+2. 数据结构不再是tibble/data.frame了, 而是矩阵, 所以我们需要用as_tibble将其重新变为tibble; 
+3. 但如同之前所说, tibble没有行名, 所以原来的列名变成行名以后又被tibble删除了; 
+
+所以我们需要写一个自定义函数来解决这件事情: 
+
+```{r warning=FALSE}
+tidy_t = function(df, id_new, id_old = colnames(df)[[1]]) {
+  
+  df |> 
+    column_to_rownames(id_old) |> # 有的时候我们还是要向过去妥协的~
+    t() |> 
+    as_tibble(rownames = id_new)
+  
+}
+
+tryCatch(tidy_t(df_maped, 'sample'), error = \(e) e)
+```
+
+怎么还是不行呢? 根据报错信息, 我们可以知道出在`column_to_rownames`, 它尝试把`id_old`(sample)这一列变为数据框的行名, 并且返回一个带行名的df而不是tb, 但是因为有的基因名是重复的, 所以我们把它作为列名以前, 需要去除重复的部分. 尽管我们可以使用函数`distinct`去除某一列中重复的部分, 但是我们并不知道它是按什么规则去除行的, 也不知道这个规则是否合适. 按道理说, 对样本进行取平均/最大/最小都是合适的, 而且还要考虑到有的基因不没有重复, 我们只要计算那些重复了的基因就好了, 这样还提高了效率, 让我们再来设计一个函数! 
+
+
+```{r}
+merge_expression = function(df, by, symbol = 'symbol') {
+  
+  match.arg(by, c('max', 'min', 'mean'))
+  
+  symbol_duplicated = df[[symbol]][duplicated(df[[symbol]])]
+  
+  if (length(symbol_duplicated) != 0) {
+    
+    df_remain = df[!df[[symbol]] %in% symbol_duplicated, ]
+    df_patch = df[df[[symbol]] %in% symbol_duplicated, ]
+    lst_patch = split(df_patch[, -1], df_patch[[symbol]])
+    
+    if (by == 'max') {
+      
+      df_patched = lst_patch |> 
+        map(~ .x |> map(max)) |> 
+        bind_rows()
+      
+    } else if (by == 'min') {
+      
+      df_patched = lst_patch |> 
+        map(~ .x |> map(max)) |> 
+        bind_rows()
+      
+    } else if (by == 'mean') {
+      
+      df_patched = lst_patch |> 
+        map(~ .x |> map(max)) |> 
+        bind_rows()
+      
+    }
+
+    df_patched = df_patched |> 
+      mutate(symbol = names(lst_patch)) |> 
+      relocate(symbol)
+    
+    colnames(df_patched) = colnames(df_remain)
+    
+    df = bind_rows(df_remain, df_patched)
+    
+  } 
+  
+  return(df)
+  
+}
+
+df_perfect = df_maped |> 
+  merge_expression('mean', 'sample') |> 
+  tidy_t('sample')
+df_perfect
+```
+
+就这样, 在我们的努力之下, 我们得到了我们想要的结果. 下面我们想比较正常样本与肿瘤样本中某个基因的表达. 根据TCGA的命名规则, 以`11`结尾的是癌旁组织的, `01`结尾则是原位肿瘤. 
+
+```{r}
+df_perfect |> 
+  select(sample, IFIT2) |> 
+  mutate(group = ifelse(str_ends(sample, '11'), 'Normal', 'Tumor')) |> 
+  ggplot() +
+  geom_point(aes(group, IFIT2))
+```
+
+以上是一个将经典的转录组数据转换为数据框并使用最为基础简单的思路处理的案例. 专业的, 经典的, 受到业界承认的工具固然重要, 然而如果对于所要进行的任务有具体的认识, 能用简单的语言清晰的描述它, 那么专业的工具的功能也能实现的七七八八了. 
+
+## 实用的表达式
+
+我们都很熟悉R中的管道符`|>`或者`%>%`, 前者原生于R中, 后者是tidy R提供的一个中缀函数(如同%in%). 下都以`|>`为例. `|>`将原先嵌套的函数展开, 内在前, 外在后. 
+
+问题一: 请问下列代码的执行顺序是如何的? 是不是先把iris这个数据框进行累加, 然后将其转换为tibble的? 
+
+```{r eval=FALSE}
+# 等价于as_tibble(tidy_rowSums(iris, "sum"))
+iris |> 
+  tidy_rowSums('sum') |> 
+  as_tibble()
+```
+
+问题二: 已知`stop`会抛出一个错误从而报错, 以下这个函数是会报错还是返回一个1? 
+
+```{r eval=FALSE}
+f = function(value = stop('Error! ')) {
+  
+  return(1)
+  
+}
+
+f()
+```
+
+
+
+
