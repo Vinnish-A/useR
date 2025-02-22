@@ -13,7 +13,15 @@ knitr:
 ```{r}
 #| include: false
 
+
 library(tidyverse)
+
+options(
+  pillar.max_extra_cols = 6,
+  pillar.print_max = 5,
+  pillar.print_min = 5,
+  pillar.max_footer_lines = 3
+)
 ```
 
 ## 前言
@@ -190,7 +198,9 @@ tidy_t = function(df, id_new, id_old = colnames(df)[[1]]) {
 tryCatch(tidy_t(df_maped, 'sample'), error = \(e) e)
 ```
 
-怎么还是不行呢? 根据报错信息, 我们可以知道出在`column_to_rownames`, 它尝试把`id_old`(sample)这一列变为数据框的行名, 并且返回一个带行名的df而不是tb, 但是因为有的基因名是重复的, 所以我们把它作为列名以前, 需要去除重复的部分. 尽管我们可以使用函数`distinct`去除某一列中重复的部分, 但是我们并不知道它是按什么规则去除行的, 也不知道这个规则是否合适. 按道理说, 对样本进行取平均/最大/最小都是合适的, 而且还要考虑到有的基因不没有重复, 我们只要计算那些重复了的基因就好了, 这样还提高了效率, 让我们再来设计一个函数! 
+怎么还是不行呢? 根据报错信息, 我们可以知道出在`column_to_rownames`, 它尝试把`id_old`(sample)这一列变为数据框的行名, 并且返回一个带行名的df而不是tb, 但是因为有的基因名是重复的, 所以我们把它作为列名以前, 需要去除重复的部分. 尽管我们可以使用函数`distinct`去除某一列中重复的部分, 但是我们并不知道它是按什么规则去除行的, 也不知道这个规则是否合适. 
+
+让我们再来设计一个函数! 对样本进行取平均/最大/最小都是合适的, 而且还要考虑到有的基因没有重复, 我们只要计算那些重复了的基因就好了, 这样还提高了效率. 
 
 
 ```{r}
@@ -260,12 +270,21 @@ df_perfect |>
 
 ## 实用的表达式
 
-我们都很熟悉R中的管道符`|>`或者`%>%`, 前者原生于R中, 后者是tidy R提供的一个中缀函数(如同%in%). 下都以`|>`为例. `|>`将原先嵌套的函数展开, 内在前, 外在后. 
+我们都很熟悉R中的管道符`|>`或者`%>%`, 前者原生于R中, 后者是tidy R提供的一个中缀函数(如同%in%). 下都以`|>`为例. 
+
+`|>`将原先嵌套的函数展开, 内在前, 外在后. 我们可以用`substitue`捕获转换后的表达式, 并且注意到它内在前外在后的特点. 
+
+```{r}
+substitute(
+  iris |> 
+  tidy_rowSums('sum') |> 
+  as_tibble()
+)
+```
 
 问题一: 请问下列代码的执行顺序是如何的? 是不是先把iris这个数据框进行累加, 然后将其转换为tibble的? 
 
 ```{r eval=FALSE}
-# 等价于as_tibble(tidy_rowSums(iris, "sum"))
 iris |> 
   tidy_rowSums('sum') |> 
   as_tibble()
