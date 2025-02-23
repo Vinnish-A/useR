@@ -82,8 +82,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#前言" id="toc-前言" class="nav-link active" data-scroll-target="#前言">前言</a></li>
   <li><a href="#为什么要用r" id="toc-为什么要用r" class="nav-link" data-scroll-target="#为什么要用r">为什么要用R?</a></li>
   <li><a href="#现代的r" id="toc-现代的r" class="nav-link" data-scroll-target="#现代的r">现代的R</a></li>
-  <li><a href="#数据框思维" id="toc-数据框思维" class="nav-link" data-scroll-target="#数据框思维">“数据框”思维</a></li>
-  <li><a href="#实用的表达式" id="toc-实用的表达式" class="nav-link" data-scroll-target="#实用的表达式">实用的表达式</a></li>
+  <li><a href="#数据框思维" id="toc-数据框思维" class="nav-link" data-scroll-target="#数据框思维">“数据框”思维</a>
+  <ul class="collapse">
+  <li><a href="#dataframe与tibble" id="toc-dataframe与tibble" class="nav-link" data-scroll-target="#dataframe与tibble">dataframe与tibble</a></li>
+  <li><a href="#以转录组数据分析为例" id="toc-以转录组数据分析为例" class="nav-link" data-scroll-target="#以转录组数据分析为例">以转录组数据分析为例</a></li>
+  <li><a href="#总结" id="toc-总结" class="nav-link" data-scroll-target="#总结">总结</a></li>
+  </ul></li>
+  <li><a href="#实用的表达式" id="toc-实用的表达式" class="nav-link" data-scroll-target="#实用的表达式">实用的表达式</a>
+  <ul class="collapse">
+  <li><a href="#惰性求值-函数式的极意" id="toc-惰性求值-函数式的极意" class="nav-link" data-scroll-target="#惰性求值-函数式的极意">惰性求值: 函数式的极意</a></li>
+  <li><a href="#延迟评估与环境" id="toc-延迟评估与环境" class="nav-link" data-scroll-target="#延迟评估与环境">延迟评估与环境</a></li>
+  <li><a href="#再叙管道符" id="toc-再叙管道符" class="nav-link" data-scroll-target="#再叙管道符">再叙管道符</a></li>
+  <li><a href="#总结-1" id="toc-总结-1" class="nav-link" data-scroll-target="#总结-1">总结</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -179,6 +190,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="数据框思维" class="level2">
 <h2 class="anchored" data-anchor-id="数据框思维">“数据框”思维</h2>
 <p>数据框(data.frame)是R中基础的数据结构之一. “数据框”思维即是指在R中把我们需要完成的任务通过转化为我们最熟悉的数据结构–数据框, 把陌生的问题转换为熟悉的问题并加以逐步解决. 数据框是列表的特殊形式. 有关R中的数据结构, 详情见<a href="https://vinnish-a.github.io/R-master/index.html">R语言高手计划</a>.</p>
+<section id="dataframe与tibble" class="level3">
+<h3 class="anchored" data-anchor-id="dataframe与tibble">dataframe与tibble</h3>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>vec_1 <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>vec_2 <span class="ot">=</span> <span class="dv">4</span><span class="sc">:</span><span class="dv">6</span></span>
@@ -249,6 +262,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="do">## 2     2 &lt;int [1]&gt;</span></span>
 <span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="do">## 3     3 &lt;int [1]&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="以转录组数据分析为例" class="level3">
+<h3 class="anchored" data-anchor-id="以转录组数据分析为例">以转录组数据分析为例</h3>
 <p>在实际工作里, 我们可能要处理一些基因表达数据. 于是我们打开了UCSC Xena, 下载了别人的预制数据. 我们惊喜的发现第一列是一列数字, 这是基因的ENTREZ ID而不是我们熟悉的Symbol. 我们需要将其转换为熟悉的Symbol.</p>
 <p>所幸我们还有一个map数据, 其内包含了ENTREZ ID与Symbol的对应关系.</p>
 <div class="cell" data-layout-align="center">
@@ -433,34 +449,263 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>以上是一个将经典的转录组数据转换为数据框并使用最为基础简单的思路处理的案例. 专业的, 经典的, 受到业界承认的工具固然重要, 然而如果对于所要进行的任务有具体的认识, 能用简单的语言清晰的描述它, 那么专业的工具的功能也能实现的七七八八了.</p>
 </section>
+<section id="总结" class="level3">
+<h3 class="anchored" data-anchor-id="总结">总结</h3>
+<ul>
+<li>数据框是R中基本而强大的数据结构之一, 数据框思维是指将任务转换为熟悉的数据结构逐步解决, 并非指只是用数据框解决问题;</li>
+<li>tibble解决了原生dataframe中的一些遗留问题, 但是tibble并不是万能的, 在灵活应用tibble的特点的同时, 我们也需要认识并避免tibble与dataframe转换带来的副作用;</li>
+</ul>
+</section>
+</section>
 <section id="实用的表达式" class="level2">
 <h2 class="anchored" data-anchor-id="实用的表达式">实用的表达式</h2>
-<p>我们都很熟悉R中的管道符<code>|&gt;</code>或者<code>%&gt;%</code>, 前者原生于R中, 后者是tidy R提供的一个中缀函数(如同%in%). 下都以<code>|&gt;</code>为例.</p>
-<p><code>|&gt;</code>将原先嵌套的函数展开, 内在前, 外在后. 我们可以用<code>substitue</code>捕获转换后的表达式, 并且注意到它内在前外在后的特点.</p>
+<p>在现代编程语言在语言发明者介绍这门语言时往往会区分表达式(expression)与语句(statement)的概念. 但是在实际使用一门语言时往往很难区分. 一般定义表达式为能够返回值的语句, 因为表达式可被求值, 所以它可写在赋值语句等号的右侧, 譬如:</p>
+<pre><code>tryCatch(a = for, error = \(e) e) # 这段代码根本无法被R解释器识别, 是看起来成立的非法语句</code></pre>
+<p>Lisp语言是不区分表达式和语句, R继承了Lisp诸多特征, 包含惰性求值, 也包含不区分表达式的特点, 所以可以认为一切R代码都是表达式.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">substitute</span>(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  iris <span class="sc">|&gt;</span> </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_rowSums</span>(<span class="st">'sum'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="do">## as_tibble(tidy_rowSums(iris, "sum"))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 有的时候我们可以这么写(很不推荐)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>a <span class="ot">=</span> <span class="cf">if</span> (T) <span class="dv">1</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>a</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<section id="惰性求值-函数式的极意" class="level3">
+<h3 class="anchored" data-anchor-id="惰性求值-函数式的极意">惰性求值: 函数式的极意</h3>
+<p>我们都很熟悉R中的管道符<code>|&gt;</code>或者<code>%&gt;%</code>, 前者原生于R中, 后者是tidy R提供的一个中缀函数(如同%in%). 下都以<code>|&gt;</code>为例.</p>
+<p><code>|&gt;</code>将原先嵌套的函数展开, 内在前, 外在后, 或者说把<code>|&gt;</code>之前的对象, 传递给<code>|&gt;</code>之后的函数的第一个参数. 我们可以用<code>substitute</code>捕获转换后的表达式, 并且注意到它内在前外在后的特点.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">substitute</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  iris <span class="sc">|&gt;</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_rowSums</span>(<span class="st">'sum'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="do">## as_tibble(tidy_rowSums(iris, "sum"))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>但是要清晰<code>|&gt;</code>乃至R中表达式的性质, 我们仍需要回答:</p>
 <p>问题一: 请问下列代码的执行顺序是如何的? 是不是先把iris这个数据框进行累加, 然后将其转换为tibble的?</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">|&gt;</span> </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_rowSums</span>(<span class="st">'sum'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">|&gt;</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_rowSums</span>(<span class="st">'sum'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>问题二: 已知<code>stop</code>会抛出一个错误从而报错, 以下这个函数是会报错还是返回一个1?</p>
+<p>问题二: 已知<code>stop</code>会抛出一个错误从而报错, 那么以下这个函数是会报错还是返回一个1?</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>f <span class="ot">=</span> <span class="cf">function</span>(<span class="at">value =</span> <span class="fu">stop</span>(<span class="st">'Error! '</span>)) {</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="dv">1</span>)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>f <span class="ot">=</span> <span class="cf">function</span>(<span class="at">value =</span> <span class="fu">stop</span>(<span class="st">'Error! '</span>)) {</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="dv">1</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>亲自运行问题二的代码后, 我们会惊讶的发现, 居然没有报错! 这是因为R中在函数传参时应用惰性求值的性质, 函数的参数在被评估(eval)之前都以表达式的形式呈现. 这一特征在R中尤其重要(这并不意味着别的语言没有惰性求值, 但是肯定不如R中应用的如此广泛以至于泛滥), 通过比较R与Python中两个同构的函数, 我们很容易发现区别:</p>
+<p>R(参数惰性求值, 外面的函数的内容先打印出来):</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>f_inner <span class="ot">=</span> <span class="cf">function</span>(x) {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">'inner'</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(x)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>f_outer <span class="ot">=</span> <span class="cf">function</span>(x) {</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">'outer'</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(x)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">f_outer</span>(<span class="fu">f_inner</span>(<span class="dv">1</span>))</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "outer"</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "inner"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Python(参数立即求值, 里面的函数的内容先打印出来):</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_outer(x):</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'outer'</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_inner(x): </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(<span class="st">'inner'</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> f_outer(f_inner(<span class="dv">1</span>))</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">## inner</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co">## outer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>基于R中函数惰性求值的性质, 我们能够实现许多有意思的函数. 其中最重要的即为延迟评估(或称非标准评估, NSE). 正如之前所提到的”数据框”思维, R中的面向对象系统多是通过简单的数据结构+函数实现的(S3系统). 函数在R中的主导地位与原生惰性求值的构成了R的绝大部分. 对延迟评估的创造性发展又是tidy R的绝大部分.</p>
+</section>
+<section id="延迟评估与环境" class="level3">
+<h3 class="anchored" data-anchor-id="延迟评估与环境">延迟评估与环境</h3>
+<p><code>Sepal.Length</code>与<code>Petal.Length</code>都是iris的一列. tidy R中我们可以如下进行文件操作:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(iris)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 150 × 5</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="do">##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="do">##          &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;  </span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="do">## 1          5.1         3.5          1.4         0.2 setosa </span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 2          4.9         3            1.4         0.2 setosa </span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 3          4.7         3.2          1.3         0.2 setosa </span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 4          4.6         3.1          1.5         0.2 setosa </span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 5          5           3.6          1.4         0.2 setosa </span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 145 more rows</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">|&gt;</span> </span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">SP_Length =</span> Sepal.Length <span class="sc">+</span> Petal.Length) <span class="sc">|&gt;</span> </span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 150 × 6</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="do">##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species SP_Length</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="do">##          &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;       &lt;dbl&gt;</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 1          5.1         3.5          1.4         0.2 setosa        6.5</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 2          4.9         3            1.4         0.2 setosa        6.3</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 3          4.7         3.2          1.3         0.2 setosa        6  </span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 4          4.6         3.1          1.5         0.2 setosa        6.1</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 5          5           3.6          1.4         0.2 setosa        6.4</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 145 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>但如果我们直接让它们相加就会报错:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tryCatch</span>(Sepal.Length <span class="sc">+</span> Petal.Length, <span class="at">error =</span> \(e) e)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="do">## &lt;simpleError in eval(expr, envir): object 'Sepal.Length' not found&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>我们需要指定<code>Sepal.Length</code>与<code>Petal.Length</code>的来源才能进行相加, 如<code>iris$Sepal.Length + iris$Petal.Length</code>. 那么上述tidy R中是如何实现让这个表达式先不要求值, 而是待指定这两个变量属于的环境之后再求值的呢? 答案就是延迟评估与对环境的利用!</p>
+<p>上面提到参数在未评估也没有被<code>substitute</code>这种函数捕获前也是表达式, 但是这种表达式没有一个具体的名字. 从实用的角度来说, 我们可以这样区分:</p>
+<ul>
+<li>激活的表达式, 如直接执行<code>x+y</code></li>
+<li>沉默的表达式, 被捕获的表达式<code>substitute(x+y)</code>或者字符串经过解析(parse)后<code>parse(text = 'x+y')</code></li>
+</ul>
+<p>激活的表达式性质不稳定, 一触即发, 沉默的表达式性质稳定, 可以想放到哪里就放到哪里, 想什么时候激活就什么时候激活. 我们使用<code>eval</code>函数激活表达式.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tryCatch</span>(x<span class="sc">+</span>y, <span class="at">error =</span> \(e) e) <span class="co"># 一触即发</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="do">## &lt;simpleError in eval(expr, envir): object 'x' not found&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>expr_xy <span class="ot">=</span> <span class="fu">substitute</span>(x<span class="sc">+</span>y)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>expr_xy</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="do">## x + y</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="fu">substitute</span>(x<span class="sc">+</span>y) <span class="sc">==</span> <span class="fu">parse</span>(<span class="at">text =</span> <span class="st">'x+y'</span>) <span class="co"># 二者等价</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] TRUE</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="fu">tryCatch</span>(<span class="fu">eval</span>(expr_xy), <span class="at">error =</span> \(e) e) <span class="co"># 触发它</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="do">## &lt;simpleError in eval(expr_xy): object 'x' not found&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>所有与<code>eval</code>相关的函数往往都会有一个名为<code>envir</code>的参数, 它表示环境(environment), 决定这个表达式被执行时所处的环境. 环境, 作用域, 命名空间的概念十分接近, 或者说其都是对环境的利用, 详细请见<a href="https://adv-r.hadley.nz/environments.html">Advanced R</a>中相关章节, 或者其它更为直观的讲解, 如<a href="https://blog.csdn.net/fengdu78/article/details/116617923">一些个人博客</a>. 作为现代编程语言的共同特点之一, 其相当普遍. 下文仅略述R中的环境特点与简易实现.</p>
+<p>R中列表与环境关系密切, 可以相互转换, 而数据框又是一种特殊的列表, 所以数据框总是可以作为一个环境:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>lst_xy <span class="ot">=</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>env_xy <span class="ot">=</span> <span class="fu">list2env</span>(lst_xy) <span class="co"># 使用list2env转换为环境</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>env_xy</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="do">## &lt;environment: 0x559e94f98f80&gt;</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="fu">as.list</span>(env_xy) <span class="co"># 使用as.list转换回列表</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="do">## $y</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 2</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="do">## $x</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>expr_xy <span class="ot">=</span> <span class="fu">substitute</span>(x<span class="sc">+</span>y)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="fu">eval</span>(expr_xy, <span class="at">envir =</span> lst_xy)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 3</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="fu">eval</span>(expr_xy, <span class="at">envir =</span> env_xy) <span class="co"># 列表与环境在此通用</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 3</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="fu">eval</span>(<span class="fu">substitute</span>(Sepal.Length <span class="sc">+</span> Petal.Length), <span class="at">envir =</span> iris)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>] <span class="co"># 数据框也很自然</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 6.5 6.3 6.0 6.1 6.4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>接下来让我们简单的实现tidy R中的mutate方法:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>modify_column <span class="ot">=</span> <span class="cf">function</span>(df, ...) {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 需要注意的是不定参数中的多个表达式不可以简单的通过substitute捕获</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 但是可以先通过list包裹起不定参数</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 意味着我们可以直观的将其转为字符串后再编码</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># tidy R中有更简单的方法(位于rlang包中), 不用的话也有更好的方法, 但是没有比这更直观的了</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Browse[1]&gt; as.character(lst_expr)</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># [1] "list"                       </span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># [2] "Sepal.Length + Petal.Length"</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># [3] "Sepal.Width + Petal.Width"</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  lst_expr <span class="ot">=</span> <span class="fu">substitute</span>(<span class="fu">list</span>(...))</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  lst_str <span class="ot">=</span> <span class="fu">setNames</span>(<span class="fu">as.character</span>(lst_expr), <span class="fu">names</span>(lst_expr))[<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Browse[1]&gt; lst_str</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># SP_Length </span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># "Sepal.Length + Petal.Length" </span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># SP_Width </span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># "Sepal.Width + Petal.Width" </span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>  lst_expr <span class="ot">=</span> <span class="fu">map</span>(lst_str, <span class="sc">~</span> <span class="fu">parse</span>(<span class="at">text =</span> .x))</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(lst_expr)) {</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>    name <span class="ot">=</span> <span class="fu">names</span>(lst_expr)[[i]]</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>    expr <span class="ot">=</span> lst_expr[[i]]</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>    df[[name]] <span class="ot">=</span> <span class="fu">eval</span>(expr, <span class="at">envir =</span> df)</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(df)</span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">|&gt;</span></span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">modify_column</span>(<span class="at">SP_Length =</span> Sepal.Length <span class="sc">+</span> Petal.Length, </span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>                <span class="at">SP_Width =</span> Sepal.Width <span class="sc">+</span> Petal.Width) <span class="sc">|&gt;</span> </span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 150 × 7</span></span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a><span class="do">##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species SP_Length SP_Width</span></span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a><span class="do">##          &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;       &lt;dbl&gt;    &lt;dbl&gt;</span></span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a><span class="do">## 1          5.1         3.5          1.4         0.2 setosa        6.5      3.7</span></span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a><span class="do">## 2          4.9         3            1.4         0.2 setosa        6.3      3.2</span></span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a><span class="do">## 3          4.7         3.2          1.3         0.2 setosa        6        3.4</span></span>
+<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a><span class="do">## 4          4.6         3.1          1.5         0.2 setosa        6.1      3.3</span></span>
+<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a><span class="do">## 5          5           3.6          1.4         0.2 setosa        6.4      3.8</span></span>
+<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 145 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>有关表达式的其它性质, 这里也顺带一提, R中所有语句几乎都是表达式, 然而不是表达式的并不能够被R解释器识别, 所以非表达式的语句直接使用不合法, 如直接运行for, if, =等关键字或符号. <code>[</code>与<code>{</code>也属于符号. 其中<code>{</code>比较特别, 其功能为把花括号内的多行表达式视作一行表达式, 所以以下都是合法的.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 这就是为什么for等关键字后面可以不跟花括号只写一行表达式</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">substitute</span>({</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  b <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="do">## {</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="do">##     a = 1</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="do">##     b = 1</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="do">## }</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (T) <span class="dv">1</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (T) {</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>) i</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="cf">function</span>(x) x <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a><span class="do">## function (x) </span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a><span class="do">## x + 1</span></span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a><span class="cf">function</span>(x) {</span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>  x <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a><span class="do">## function (x) </span></span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a><span class="do">## {</span></span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a><span class="do">##     x + 1</span></span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a><span class="do">## }</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="再叙管道符" class="level3">
+<h3 class="anchored" data-anchor-id="再叙管道符">再叙管道符</h3>
+</section>
+<section id="总结-1" class="level3">
+<h3 class="anchored" data-anchor-id="总结-1">总结</h3>
+</section>
 </section>
 
 </main>

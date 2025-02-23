@@ -84,6 +84,8 @@ iris |>
 
 数据框(data.frame)是R中基础的数据结构之一. "数据框"思维即是指在R中把我们需要完成的任务通过转化为我们最熟悉的数据结构--数据框, 把陌生的问题转换为熟悉的问题并加以逐步解决. 数据框是列表的特殊形式. 有关R中的数据结构, 详情见[R语言高手计划](https://vinnish-a.github.io/R-master/index.html). 
 
+### dataframe与tibble
+
 ```{r}
 vec_1 = 1:3
 vec_2 = 4:6
@@ -134,6 +136,8 @@ tb_raw
 tb_lst
 
 ```
+
+### 以转录组数据分析为例
 
 在实际工作里, 我们可能要处理一些基因表达数据. 于是我们打开了UCSC Xena, 下载了别人的预制数据. 我们惊喜的发现第一列是一列数字, 这是基因的ENTREZ ID而不是我们熟悉的Symbol. 我们需要将其转换为熟悉的Symbol. 
 
@@ -268,11 +272,32 @@ df_perfect |>
 
 以上是一个将经典的转录组数据转换为数据框并使用最为基础简单的思路处理的案例. 专业的, 经典的, 受到业界承认的工具固然重要, 然而如果对于所要进行的任务有具体的认识, 能用简单的语言清晰的描述它, 那么专业的工具的功能也能实现的七七八八了. 
 
+### 总结
+
+- 数据框是R中基本而强大的数据结构之一, 数据框思维是指将任务转换为熟悉的数据结构逐步解决, 并非指只是用数据框解决问题; 
+- tibble解决了原生dataframe中的一些遗留问题, 但是tibble并不是万能的, 在灵活应用tibble的特点的同时, 我们也需要认识并避免tibble与dataframe转换带来的副作用; 
+
 ## 实用的表达式
+
+在现代编程语言在语言发明者介绍这门语言时往往会区分表达式(expression)与语句(statement)的概念. 但是在实际使用一门语言时往往很难区分. 一般定义表达式为能够返回值的语句, 因为表达式可被求值, 所以它可写在赋值语句等号的右侧, 譬如: 
+
+```
+tryCatch(a = for, error = \(e) e) # 这段代码根本无法被R解释器识别, 是看起来成立的非法语句
+```
+
+Lisp语言是不区分表达式和语句, R继承了Lisp诸多特征, 包含惰性求值, 也包含不区分表达式的特点, 所以可以认为一切R代码都是表达式. 
+
+```{r}
+# 有的时候我们可以这么写(很不推荐)
+a = if (T) 1
+a
+```
+
+### 惰性求值: 函数式的极意
 
 我们都很熟悉R中的管道符`|>`或者`%>%`, 前者原生于R中, 后者是tidy R提供的一个中缀函数(如同%in%). 下都以`|>`为例. 
 
-`|>`将原先嵌套的函数展开, 内在前, 外在后. 我们可以用`substitue`捕获转换后的表达式, 并且注意到它内在前外在后的特点. 
+`|>`将原先嵌套的函数展开, 内在前, 外在后, 或者说把`|>`之前的对象, 传递给`|>`之后的函数的第一个参数. 我们可以用`substitute`捕获转换后的表达式, 并且注意到它内在前外在后的特点. 
 
 ```{r}
 substitute(
@@ -282,6 +307,8 @@ substitute(
 )
 ```
 
+但是要清晰`|>`乃至R中表达式的性质, 我们仍需要回答: 
+
 问题一: 请问下列代码的执行顺序是如何的? 是不是先把iris这个数据框进行累加, 然后将其转换为tibble的? 
 
 ```{r eval=FALSE}
@@ -290,7 +317,7 @@ iris |>
   as_tibble()
 ```
 
-问题二: 已知`stop`会抛出一个错误从而报错, 以下这个函数是会报错还是返回一个1? 
+问题二: 已知`stop`会抛出一个错误从而报错, 那么以下这个函数是会报错还是返回一个1? 
 
 ```{r eval=FALSE}
 f = function(value = stop('Error! ')) {
@@ -302,6 +329,173 @@ f = function(value = stop('Error! ')) {
 f()
 ```
 
+亲自运行问题二的代码后, 我们会惊讶的发现, 居然没有报错! 这是因为R中在函数传参时应用惰性求值的性质, 函数的参数在被评估(eval)之前都以表达式的形式呈现. 这一特征在R中尤其重要(这并不意味着别的语言没有惰性求值, 但是肯定不如R中应用的如此广泛以至于泛滥), 通过比较R与Python中两个同构的函数, 我们很容易发现区别: 
+
+R(参数惰性求值, 外面的函数的内容先打印出来): 
+
+```{r}
+f_inner = function(x) {
+  
+  print('inner')
+  return(x)
+  
+  
+}
+
+f_outer = function(x) {
+  
+  print('outer')
+  return(x)
+  
+}
+
+res = f_outer(f_inner(1))
+```
+
+Python(参数立即求值, 里面的函数的内容先打印出来): 
+
+```{python}
+def f_outer(x):
+  
+    print('outer')
+    return x
+  
+def f_inner(x): 
+  
+  print('inner')
+  return x
+
+res = f_outer(f_inner(1))
+```
+
+基于R中函数惰性求值的性质, 我们能够实现许多有意思的函数. 其中最重要的即为延迟评估(或称非标准评估, NSE). 正如之前所提到的"数据框"思维, R中的面向对象系统多是通过简单的数据结构+函数实现的(S3系统). 函数在R中的主导地位与原生惰性求值的构成了R的绝大部分. 对延迟评估的创造性发展又是tidy R的绝大部分. 
+
+### 延迟评估与环境
+
+`Sepal.Length`与`Petal.Length`都是iris的一列. tidy R中我们可以如下进行文件操作: 
+
+```{r}
+as_tibble(iris)
+
+iris |> 
+  mutate(SP_Length = Sepal.Length + Petal.Length) |> 
+  as_tibble()
+```
+
+但如果我们直接让它们相加就会报错: 
+
+```{r}
+tryCatch(Sepal.Length + Petal.Length, error = \(e) e)
+```
+
+我们需要指定`Sepal.Length`与`Petal.Length`的来源才能进行相加, 如`iris$Sepal.Length + iris$Petal.Length`. 那么上述tidy R中是如何实现让这个表达式先不要求值, 而是待指定这两个变量属于的环境之后再求值的呢? 答案就是延迟评估与对环境的利用! 
+
+上面提到参数在未评估也没有被`substitute`这种函数捕获前也是表达式, 但是这种表达式没有一个具体的名字. 从实用的角度来说, 我们可以这样区分: 
+
+- 激活的表达式, 如直接执行`x+y`
+- 沉默的表达式, 被捕获的表达式`substitute(x+y)`或者字符串经过解析(parse)后`parse(text = 'x+y')`
+
+激活的表达式性质不稳定, 一触即发, 沉默的表达式性质稳定, 可以想放到哪里就放到哪里, 想什么时候激活就什么时候激活. 我们使用`eval`函数激活表达式. 
+
+```{r}
+tryCatch(x+y, error = \(e) e) # 一触即发
+
+expr_xy = substitute(x+y)
+expr_xy
+
+substitute(x+y) == parse(text = 'x+y') # 二者等价
+
+tryCatch(eval(expr_xy), error = \(e) e) # 触发它
+```
+
+所有与`eval`相关的函数往往都会有一个名为`envir`的参数, 它表示环境(environment), 决定这个表达式被执行时所处的环境. 环境, 作用域, 命名空间的概念十分接近, 或者说其都是对环境的利用, 详细请见[Advanced R](https://adv-r.hadley.nz/environments.html)中相关章节, 或者其它更为直观的讲解, 如[一些个人博客](https://blog.csdn.net/fengdu78/article/details/116617923). 作为现代编程语言的共同特点之一, 其相当普遍. 下文仅略述R中的环境特点与简易实现. 
+
+R中列表与环境关系密切, 可以相互转换, 而数据框又是一种特殊的列表, 所以数据框总是可以作为一个环境: 
+
+```{r}
+lst_xy = list(x = 1, y = 2)
+env_xy = list2env(lst_xy) # 使用list2env转换为环境
+env_xy
+
+as.list(env_xy) # 使用as.list转换回列表
+
+expr_xy = substitute(x+y)
+eval(expr_xy, envir = lst_xy)
+
+eval(expr_xy, envir = env_xy) # 列表与环境在此通用
+
+eval(substitute(Sepal.Length + Petal.Length), envir = iris)[1:5] # 数据框也很自然
+```
+
+接下来让我们简单的实现tidy R中的mutate方法: 
+
+```{r}
+modify_column = function(df, ...) {
+  
+  # 需要注意的是不定参数中的多个表达式不可以简单的通过substitute捕获
+  # 但是可以先通过list包裹起不定参数
+  # 意味着我们可以直观的将其转为字符串后再编码
+  # tidy R中有更简单的方法(位于rlang包中), 不用的话也有更好的方法, 但是没有比这更直观的了
+  # Browse[1]> as.character(lst_expr)
+  # [1] "list"                       
+  # [2] "Sepal.Length + Petal.Length"
+  # [3] "Sepal.Width + Petal.Width"
+  lst_expr = substitute(list(...))
+  lst_str = setNames(as.character(lst_expr), names(lst_expr))[-1]
+  # Browse[1]> lst_str
+  # SP_Length 
+  # "Sepal.Length + Petal.Length" 
+  # SP_Width 
+  # "Sepal.Width + Petal.Width" 
+  
+  lst_expr = map(lst_str, ~ parse(text = .x))
+  
+  for (i in seq_along(lst_expr)) {
+    
+    name = names(lst_expr)[[i]]
+    expr = lst_expr[[i]]
+    
+    df[[name]] = eval(expr, envir = df)
+    
+  }
+
+  return(df)
+
+}
+
+iris |>
+  modify_column(SP_Length = Sepal.Length + Petal.Length, 
+                SP_Width = Sepal.Width + Petal.Width) |> 
+  as_tibble()
+```
+
+有关表达式的其它性质, 这里也顺带一提, R中所有语句几乎都是表达式, 然而不是表达式的并不能够被R解释器识别, 所以非表达式的语句直接使用不合法, 如直接运行for, if, =等关键字或符号. `[`与`{`也属于符号. 其中`{`比较特别, 其功能为把花括号内的多行表达式视作一行表达式, 所以以下都是合法的. 
+
+```{r}
+# 这就是为什么for等关键字后面可以不跟花括号只写一行表达式
+substitute({
+  a = 1
+  b = 1
+})
+
+if (T) 1
+
+if (T) {
+  1
+}
+
+for (i in 1:10) i
+
+function(x) x + 1
+
+function(x) {
+  x + 1
+}
+```
 
 
+
+### 再叙管道符
+
+### 总结
 
